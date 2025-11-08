@@ -174,7 +174,7 @@ class _NewProductFormState extends State<NewProductForm> {
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
                       decoration: InputDecoration(
-                        hintText: "URL Thumbnail (opsional)",
+                        hintText: "URL Thumbnail",
                         labelText: "URL Thumbnail",
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0),
@@ -321,13 +321,13 @@ class _NewProductFormState extends State<NewProductForm> {
                                       child: const Text('OK'),
                                       onPressed: () {
                                         Navigator.pop(context);
+                                        _formKey.currentState!.reset();
                                       },
                                     ),
                                   ],
                                 );
                               },
                             );
-                            _formKey.currentState!.reset();
                           }
                         },
                         child: const Text(

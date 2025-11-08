@@ -153,3 +153,224 @@ Dalam contoh di atas, `context` digunakan untuk mengakses tema aplikasi.
     *   Ketika mengubah *initial state* dari sebuah `StatefulWidget` yang sudah dibuat dan ingin melihat efeknya dari awal.
     *   Ketika menambah atau mengubah *dependencies* paket.
     *   Ketika merasa *state* aplikasi menjadi tidak konsisten setelah beberapa kali Hot Reload.
+
+
+# <p align="center">**TUGAS 8**</p>
+## Perbedaan antara `Navigator.push()` dan `Navigator.pushReplacement()` pada Flutter
+`Navigator` adalah widget yang mengelola tumpukan (stack) halaman atau rute di aplikasi Flutter. Ketika berpindah dari satu halaman ke halaman lain, sebenarnya memanipulasi stack tersebut. Dua metode umum untuk navigasi adalah `push()` dan `pushReplacement()`.
+
+**`Navigator.push()`**
+*   **Fungsi:** Menambahkan rute baru ke bagian atas tumpukan navigasi.
+*   **Perilaku:** Halaman sebelumnya **tetap ada** di tumpukan dan menjadi rute di bawah halaman yang baru. User dapat kembali ke halaman sebelumnya menggunakan tombol kembali perangkat atau `Navigator.pop(context)`.
+*   **Ilustrasi:**
+    `[Halaman A]` -> `Navigator.push(Halaman B)` -> `[Halaman A, Halaman B]`
+    Ketika menekan tombol kembali dari Halaman B, akan kembali ke Halaman A.
+
+**`Navigator.pushReplacement()`**
+*   **Fungsi:** Mengganti rute teratas di tumpukan navigasi dengan rute baru.
+*   **Perilaku:** Halaman sebelumnya **dihapus** dari tumpukan dan digantikan oleh halaman yang baru. Ini berarti User **tidak dapat** kembali ke halaman yang diganti menggunakan tombol kembali perangkat.
+*   **Ilustrasi:**
+    `[Halaman A]` -> `Navigator.pushReplacement(Halaman B)` -> `[Halaman B]`
+    Ketika menekan tombol kembali dari Halaman B, aplikasi akan keluar (jika Halaman B adalah satu-satunya di tumpukan) atau kembali ke rute yang *sebelum* Halaman A.<br><br>
+***Penggunaan :***<br><br>
+**`Navigator.push()` (Untuk menambah halaman ke tumpukan dan bisa kembali):**
+*   **Form Produk:** dari *homepage*, ketika user ingin menambahkan produk baru atau mengubah produk yang ada, aplikasi menampilkan `ProductFormPage`
+*   **Detail Produk:** Dari daftar produk (misalnya, `ProductListPage`), ketika user menekan salah satu produk untuk melihat detailnya (`ProductDetailPage`). User diharapkan dapat kembali ke daftar produk setelah melihat detailnya.
+*   **Halaman Pengaturan:** Dari *homepage*, ketika user membuka halaman pengaturan (`SettingsPage`). User pasti ingin kembali ke `Homepage` setelah selesai mengatur.
+*   **Proses Checkout Bertahap:** Jika proses *checkout* memiliki beberapa langkah (misalnya, `ShippingAddressPage` -> `PaymentMethodPage` -> `OrderSummaryPage`). user mungkin ingin kembali ke langkah sebelumnya untuk mengubah informasi.
+
+**`Navigator.pushReplacement()` (Untuk mengganti halaman, biasanya di momen penting):**
+*   **Setelah Login Berhasil:** Setelah user berhasil *login* (`LoginPage`), user tidak perlu kembali ke halaman *login* dengan menekan tombol kembali. Langsung ganti `LoginPage` dengan `Homepage`.
+*   **Setelah Register Berhasil:** Mirip dengan *login*, setelah register (`RegisterPage`) selesai, ganti dengan halaman utama atau halaman profil.
+*   **Reset Password Sukses:** Setelah user berhasil mengatur ulang kata sandi baru, selanjutnya mengganti halaman *reset password* dengan halaman *login* lagi.
+
+## Memanfaatkan Hierarchy Widget Seperti `Scaffold`, `AppBar`, dan `Drawer` untuk Membangun Struktur Halaman yang Konsisten
+`Scaffold`, `AppBar`, dan `Drawer` adalah widget kunci dalam Flutter yang mengikuti pedoman Material Design untuk struktur aplikasi.<br><br>**`Scaffold` sebagai Fondasi Setiap Halaman:**
+*   **Fungsi:** `Scaffold` adalah kerangka dasar untuk setiap layar atau halaman di aplikasi Material Design. Ini menyediakan slot-slot standar untuk elemen UI utama.
+*   **Pemanfaatan di Shot On Target Market:**
+    *   **Setiap Halaman Memiliki `Scaffold`:** Setiap "layar" utama aplikasi Anda (misalnya, `HomePage`, `ProductFirmPage`, `ProductPage`, dan lain-lain) harus dibungkus dalam sebuah `Scaffold`. Ini memastikan setiap halaman memiliki struktur dasar yang sama.
+    *   **Konsistensi Visual:** Dengan menggunakan `Scaffold`, secara otomatis mendapatkan perilaku Material Design seperti kemampuan untuk menampilkan *snackbar*, *bottom sheet*, *floating action button*, dan integrasi dengan tema aplikasi. Ini menciptakan tampilan yang seragam dan konsisten.
+
+**`AppBar` untuk Navigasi dan Branding di Setiap Halaman:**
+*   **Fungsi:** `AppBar` adalah bilah atas di `Scaffold` yang berfungsi sebagai penunjuk lokasi user, judul halaman, dan tempat untuk tombol navigasi atau aksi.
+*   **Pemanfaatan di Shot On Target Market:**
+    *   **Judul Halaman yang Jelas:** Setiap `AppBar` dapat menampilkan judul halaman yang relevan (misalnya, `Create New Product`). Ini membantu user memahami di mana user berada.
+    *   **Tombol Kembali Otomatis:** Ketika `push()` halaman baru, `AppBar` secara otomatis akan menampilkan tombol kembali di sebelah kiri judul, yang sangat penting untuk navigasi intuitif.
+    *   **Icon Menu Drawer:** Di halaman utama (`HomePage`), `AppBar` secara otomatis akan menampilkan ikon hamburger (menu) di sebelah kiri jika `drawer` disediakan di `Scaffold`.
+
+**`Drawer` untuk Navigasi Global dan Fungsionalitas Sekunder:**
+*   **Fungsi:** `Drawer` adalah panel navigasi yang meluncur keluar dari samping layar (biasanya kiri) yang berisi daftar link ke tujuan utama aplikasi.
+*   **Pemanfaatan di Shot On Target Market:**
+    *   **Navigasi Utama:** `Drawer` adalah tempat ideal untuk menempatkan link ke halaman-halaman utama seperti "Home", "All Products", "Create Product", dan lain-lain. Ini menyediakan *entry point* yang konsisten untuk navigasi tingkat atas di seluruh aplikasi.
+    *   **Informasi :** dapat menambahkan header di `Drawer` yang menampilkan informasi, misalnya judul dan tagline atau profil user.
+    *   **Mengurangi Kekacauan AppBar:** Dengan memindahkan banyak link navigasi ke `Drawer`, `AppBar` dapat tetap bersih dan fokus pada judul halaman dan aksi-aksi utama yang sangat penting.
+    *   **Aksesibilitas Konsisten:** Di halaman manapun yang memiliki `Scaffold` dengan `drawer` yang diatur, pengguna dapat menggeser dari tepi layar atau mengetuk ikon menu di `AppBar` untuk mengakses navigasi global.
+
+## Kelebihan Layout Widget Seperti `Padding`, `SingleChildScrollView`, dan `ListView` 
+
+Ketika membangun formulir (form) di aplikasi Shot On Target Market, penggunaan layout widget seperti `Padding`, `SingleChildScrollView`, dan `ListView` sangat penting untuk menciptakan antarmuka yang ramah pengguna, mudah dibaca, dan adaptif.<br><br>**Kelebihan `Padding`:** 
+*   **Keterbacaan dan Estetika:** `Padding` menambahkan ruang kosong di sekeliling widget anaknya. Ini sangat penting untuk formulir agar elemen-elemen input tidak terlihat terlalu padat dan menempel satu sama lain atau ke tepi layar. Ruang kosong meningkatkan keterbacaan dan membuat antarmuka terlihat lebih rapi dan profesional.
+*   **Area Sentuh yang Jelas:** Dengan *padding*, setiap *input field* atau tombol memiliki "ruang bernapas" di sekelilingnya, membuat area sentuh lebih jelas dan mengurangi kesalahan sentuhan.
+*   **Konsistensi Visual:** `Padding` dapat mengset nilai yang konsisten untuk semua elemen formulir, menciptakan tata letak yang seragam.<br><br>
+**Contoh Penggunaan**
+```dart
+// Bagian dari new_product_form.dart (line: 50)
+...
+  child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+          // === Title ===
+          Padding(                        // <<<<<<<<<<<<<<<<<
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              decoration: InputDecoration(
+                hintText: "Title",
+                labelText: "Title",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+              ),
+              ...
+            ),
+          ),
+          // === Price ===
+          Padding(                        // <<<<<<<<<<<<<<<<<
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              keyboardType: TextInputType.number,
+              maxLines: 5,
+              decoration: InputDecoration(
+                hintText: "Price",
+                labelText: "Price",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+              ),
+              ...
+            ),
+          ),
+          ...
+        ]
+    )
+  ...
+```
+**Kelebihan `SingleChildScrollView`:**
+*   **Mengatasi Overflow Layar (Keyboard Overlay):** Ini adalah kelebihan terbesar. Formulir seringkali memiliki banyak *input field*. Ketika *keyboard* virtual muncul, ia dapat menutupi bagian bawah formulir. `SingleChildScrollView` memastikan bahwa seluruh konten formulir dapat digulir, sehingga pengguna selalu dapat mengakses *input field* yang sedang mereka edit atau tombol *submit*.
+*   **Adaptasi Ukuran Layar:** Memungkinkan formulir berfungsi dengan baik di berbagai ukuran layar dan orientasi (potret/landscape) tanpa khawatir konten akan terpotong.
+*   **Sederhana untuk Formulir Pendek:** Jika formulir tidak terlalu panjang dan hanya perlu digulir sesekali (misalnya, saat keyboard muncul), `SingleChildScrollView` adalah solusi yang sederhana dan ringan.<br><br>
+**Contoh Penggunaan :**
+
+```dart
+// Bagian dari new_product_form.dart (line: 299)
+...
+  return AlertDialog(
+      title: const Text('New Product Created'),
+      content: SingleChildScrollView(                        // <<<<<<<<<<<<<<<<<
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
+          children: [
+            Text('Title: $_title'),
+            Text('Price: $_price'),
+            Text('Description: $_description'),
+            Text('Category: $_category'),
+            Text('Thumbnail: $_thumbnailUrl'),
+            Text(
+                'Is Featured: ${_isFeatured ? "Yes" : "No"}'),
+            Text('Stock: $_stock'),
+            Text(
+                'Purchased Quantity: $_quantityPurchased'),
+          ],
+        ),
+      ),
+      ...
+    )
+...
+```
+**Kelebihan `ListView`:**
+*   **Efisiensi Rendering (Lazy Loading):** Untuk formulir yang sangat panjang atau daftar *input field* yang dihasilkan secara dinamis (misalnya, daftar item pesanan yang dapat diubah kuantitasnya), `ListView` adalah pilihan yang lebih efisien daripada `SingleChildScrollView` + `Column`. `ListView` hanya merender item yang terlihat di layar, menghemat sumber daya sistem.
+*   **Penanganan Daftar Dinamis:** Ideal untuk skenario di mana jumlah elemen formulir bisa bervariasi (misalnya, menambahkan atau menghapus item dari keranjang belanja yang juga berfungsi sebagai bagian dari formulir *checkout*).
+*   **Built-in Scrolling:** Seperti `SingleChildScrollView`, `ListView` juga memiliki kemampuan *scrolling* bawaan.<br><br>
+**Contoh Penggunaan**
+```dart
+// Bagian dari left_drawer.dart (line: 10)
+...
+  return Drawer(
+    child: ListView(                        // <<<<<<<<<<<<<<<<<
+      children: [
+        const DrawerHeader(
+          decoration: BoxDecoration(
+            color: Colors.blue,
+          ),
+          child: Column(
+            children: [
+              Text(
+                'Shot On Target Market',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              Padding(padding: EdgeInsets.all(8)),
+              Text("Your One-Stop Market, Always on Target!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.white,
+                    fontWeight: FontWeight.normal,
+                  ),
+              ),
+            ],
+          ),
+        ),
+        ListTile(
+          leading: const Icon(Icons.all_inbox),
+          title: const Text('Home'),
+          // Bagian redirection ke MyHomePage
+          onTap: () {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyHomePage(),
+                ));
+          },
+        ),
+        ...
+      ]
+    )
+  );
+...
+```
+## Penyesuaian Warna Tema Agar Memiliki Identitas Visual yang Konsisten dengan Brand
+Menyesuaikan warna tema adalah langkah krusial untuk memberikan aplikasi identitas visual yang kuat dan konsisten dengan *brand*. Ini dilakukan melalui widget `ThemeData` yang disediakan oleh `MaterialApp`.<br><br>Langkah-langkah dan contoh penerapannya:
+1. **Mendefinisikan Warna Utama:** mengidentifikasi warna-warna utama yang mewakili *brand*. Misalnya:
+*   **Warna Primer:** Mungkin warna dominan pada logo/ tema.
+*   **Warna Sekunder:** Warna aksen atau pelengkap.
+*   **Warna Latar Belakang:** Warna dasar UI.
+*   **Warna Teks:** Untuk teks gelap dan terang.
+*   **Warna Error/Peringatan:** (misalnya, merah untuk pesan error).
+
+2. **Menggunakan `ThemeData` di `MaterialApp`:** semua penyesuaian tema utama dilakukan melalui properti `theme` pada `MaterialApp`.
+```dart
+// main.dart
+...
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Shot On Target Market',
+      theme: ThemeData(
+        ...
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+      ),
+      home: MyHomePage(),
+    );
+  }
+```
+**Manfaat Konsistensi Visual:**
+
+*   **Pengenalan Brand:** User akan segera mengasosiasikan warna-warna ini dengan aplikasi dan platform.
+*   **Pengalaman Pengguna yang Lebih Baik:** UI yang konsisten lebih mudah dipahami dan digunakan. Pengguna tidak perlu beradaptasi dengan gaya yang berbeda di setiap halaman.
+*   **Profesionalisme:** Aplikasi terlihat lebih terpoles dan profesional.
+*   **Efisiensi Pengembangan:** Dengan mengatur tema secara global, tidak perlu mengatur warna atau gaya satu per satu di setiap widget, menghemat waktu dan mengurangi potensi kesalahan.
