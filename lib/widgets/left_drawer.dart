@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shot_on_target_market/screens/menu.dart';
 import 'package:shot_on_target_market/screens/new_product_form.dart';
+import 'package:shot_on_target_market/screens/product_entry_list.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -68,7 +69,7 @@ class LeftDrawer extends StatelessWidget {
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(
-                    builder: (context) => MyHomePage(), // Ganti dengan halaman My Products
+                    builder: (context) => ProductEntryListPage(), // Ganti dengan halaman My Products
                   ));
             },
           ),

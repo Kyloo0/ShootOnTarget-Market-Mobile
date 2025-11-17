@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shot_on_target_market/screens/menu.dart';
+import 'package:shot_on_target_market/screens/my_product_entry_list.dart';
 import 'package:shot_on_target_market/screens/new_product_form.dart';
+import 'package:shot_on_target_market/screens/product_entry_list.dart%20';
 
 class ItemHomepage {
  final String name;
@@ -70,12 +71,12 @@ class ItemCard extends StatelessWidget {
             if (item.name == "All Products") {
               Navigator.push(context, 
                 MaterialPageRoute(
-                  builder: (context) => MyHomePage(),
+                  builder: (context) => ProductEntryListPage(),
                 ));
             } else if (item.name == "My Products") {
               Navigator.push(context, 
                 MaterialPageRoute(
-                  builder: (context) => MyHomePage(), // Ganti dengan halaman My Products
+                  builder: (context) => MyProductEntryListPage(), // Ganti dengan halaman My Products
                 ));
             } else if (item.name == "Create Products") {
               Navigator.push(context,

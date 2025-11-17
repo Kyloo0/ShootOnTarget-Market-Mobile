@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shot_on_target_market/widgets/left_drawer.dart';
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:shot_on_target_market/screens/menu.dart';
 
 class NewProductForm extends StatefulWidget {
   const NewProductForm({super.key});
@@ -22,7 +26,7 @@ class _NewProductFormState extends State<NewProductForm> {
 
   final List<String> _categories = [
     'accessories',
-    'tim_kit',
+    'team_kit',
     'footwear',
     'protective_gear',
     'match_equipment',
@@ -32,6 +36,7 @@ class _NewProductFormState extends State<NewProductForm> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
             title: const Center(
@@ -290,9 +295,38 @@ class _NewProductFormState extends State<NewProductForm> {
                           backgroundColor:
                               MaterialStateProperty.all(Colors.indigo),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
+                            final response = await request.postJson(
+                              "http://localhost:8000/create-flutter/",
+                              jsonEncode({
+                                "name": _title,
+                                "price": _price,
+                                "description": _description,
+                                "thumbnail": _thumbnailUrl,
+                                "category": _category,
+                                "is_featured": _isFeatured,
+                                "stock": _stock
+                              }),
+                            );
+                            if (context.mounted) {
+                              if (response['status'] == 'success') {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text("Product successfully saved!"),
+                                ));
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MyHomePage()),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text("Something went wrong, please try again."),
+                                ));
+                              }
+                            }
                             showDialog(
                               context: context,
                               builder: (context) {
