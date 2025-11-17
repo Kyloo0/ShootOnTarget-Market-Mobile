@@ -14,7 +14,7 @@ class MyProductEntryListPage extends StatefulWidget {
 }
 
 class _MyProductEntryListPageState extends State<MyProductEntryListPage> {
-  Future<List<ProductEntry>> fetchNews(CookieRequest request) async {
+  Future<List<ProductEntry>> fetchProducts(CookieRequest request) async {
     // TODO: Replace the URL with your app's URL and don't forget to add a trailing slash (/)!
     // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
     // If you using chrome,  use URL http://localhost:8000
@@ -43,7 +43,7 @@ class _MyProductEntryListPageState extends State<MyProductEntryListPage> {
       ),
       drawer: const LeftDrawer(),
       body: FutureBuilder(
-        future: fetchNews(request),
+        future: fetchProducts(request),
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.data == null) {
             return const Center(child: CircularProgressIndicator());

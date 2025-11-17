@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:shot_on_target_market/screens/product_detail.dart';
 
+enum ProductFilter { all, my }
+
 class ProductEntryListPage extends StatefulWidget {
   const ProductEntryListPage({super.key});
 
@@ -14,24 +16,32 @@ class ProductEntryListPage extends StatefulWidget {
 }
 
 class _ProductEntryListPageState extends State<ProductEntryListPage> {
-  Future<List<ProductEntry>> fetchNews(CookieRequest request) async {
-    // TODO: Replace the URL with your app's URL and don't forget to add a trailing slash (/)!
-    // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
-    // If you using chrome,  use URL http://localhost:8000
-    
-    final response = await request.get('http://localhost:8000/json/');
-    
-    // Decode response to json format
-    var data = response;
-    
-    // Convert json data to NewsEntry objects
-    List<ProductEntry> listNews = [];
-    for (var d in data) {
+  ProductFilter selectedFilter = ProductFilter.all;
+  late Future<List<ProductEntry>> futureProducts;
+
+  @override
+  void initState() {
+    super.initState();
+    futureProducts = fetchProducts(context.read<CookieRequest>());
+  }
+  Future<List<ProductEntry>> fetchProducts(CookieRequest request) async {
+    String url;
+
+    if (selectedFilter == ProductFilter.my) {
+      url = 'http://localhost:8000/my-products-json/';
+    } else {
+      url = 'http://localhost:8000/json/';
+    }
+
+    final response = await request.get(url);
+    List<ProductEntry> products = [];
+
+    for (var d in response) {
       if (d != null) {
-        listNews.add(ProductEntry.fromJson(d));
+        products.add(ProductEntry.fromJson(d));
       }
     }
-    return listNews;
+    return products;
   }
 
   @override
@@ -40,10 +50,32 @@ class _ProductEntryListPageState extends State<ProductEntryListPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product List'),
+        actions: [
+          DropdownButton<ProductFilter>(  // Dropdown filter products
+            value: selectedFilter,
+            underline: const SizedBox(),
+            items: const [
+              DropdownMenuItem(
+                value: ProductFilter.all,
+                child: Text("All Products"),
+              ),
+              DropdownMenuItem(
+                value: ProductFilter.my,
+                child: Text("My Products"),
+              ),
+            ],
+            onChanged: (value) {
+              setState(() {
+                selectedFilter = value!;
+                futureProducts = fetchProducts(request); // Refresh data
+              });
+            },
+          ),
+        ],
       ),
       drawer: const LeftDrawer(),
       body: FutureBuilder(
-        future: fetchNews(request),
+        future: fetchProducts(request),
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.data == null) {
             return const Center(child: CircularProgressIndicator());
